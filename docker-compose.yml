@@ -1,0 +1,14 @@
+version: '2.2'
+services:
+  cassandra:
+    image: cassandra:3.11.8
+    restart: always
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_SEEDS=cassandra
+      - CASSANDRA_CLUSTER_NAME=cluster
+      - CASSANDRA_NUM_TOKENS=8
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_RACK=rack0
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
