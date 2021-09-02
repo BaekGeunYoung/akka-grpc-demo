@@ -251,7 +251,7 @@ grpcurl -d '{"cartId":"cart1"}' -plaintext 127.0.0.1:8103 shoppingcart.ShoppingC
 configuration file에서 kubernetes API를 이용해 akka discovery를 구성하도록 설정할 수 있다.
 
 `clsuter.conf`
-```json
+```
 akka.management {
   http {
     port = 8558
