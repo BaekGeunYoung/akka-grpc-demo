@@ -89,4 +89,9 @@ libraryDependencies ++= Seq(
 
   "com.thesamet.scalapb" %% "lenses" % "0.11.3" cross CrossVersion.for3Use2_13,
   "com.thesamet.scalapb" %% "scalapb-runtime" % "0.11.3" cross CrossVersion.for3Use2_13,
+
+  "org.typelevel" %% "cats-core" % "2.6.1",
+  "org.typelevel" %% "cats-free" % "2.6.1",
+
+  "dev.zio" %% "zio" % "2.0.0-M2",
 )

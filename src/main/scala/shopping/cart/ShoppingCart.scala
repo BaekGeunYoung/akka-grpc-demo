@@ -19,6 +19,8 @@ import akka.persistence.typed.scaladsl.ReplyEffect
 import akka.persistence.typed.scaladsl.RetentionCriteria
 
 import scala.concurrent.Future
+import scala.util.Failure
+import scala.util.Success
 
 /**
  * This is an event sourced actor (`EventSourcedBehavior`). An entity managed by Cluster Sharding.
@@ -78,6 +80,10 @@ object ShoppingCart {
    * This interface defines all the commands (messages) that the ShoppingCart actor supports.
    */
   sealed trait Command
+
+  sealed trait ExecuteCommand
+
+  sealed trait ReplyCommand
 
   /**
    * A command to add an item to the cart.
@@ -210,6 +216,11 @@ object ShoppingCart {
       openShoppingCart(cartId, state, command)
   }
 
+  private def someFuture(): Future[String] = {
+    Thread.sleep(3000L)
+    Future.successful("qwe")
+  }
+
   private def openShoppingCart(
       cartId: String,
       state: State,
@@ -217,6 +228,13 @@ object ShoppingCart {
   ): ReplyEffect[Event, State] = {
     command match {
       case AddItem(itemId, quantity, replyTo) =>
+        // context.pipeToSelf(someFuture()) { result =>
+        //   result match {
+        //     case Success(value) => Checkout(cartId, replyTo)
+        //     case Failure(e) => Checkout(cartId, replyTo)
+        //   }
+        // }
+        // Effect.stash()
         if (state.hasItem(itemId))
           Effect.reply(replyTo)(
             StatusReply.Error(
@@ -232,7 +250,6 @@ object ShoppingCart {
             .thenReply(replyTo) { updatedCart =>
               StatusReply.Success(updatedCart.toSummary)
             }
-      
 
       case RemoveItem(itemId, replyTo) =>
         if (state.hasItem(itemId))
@@ -273,13 +290,11 @@ object ShoppingCart {
             .persist(CheckedOut(cartId, Instant.now()))
             .thenReply(replyTo)(updatedCart =>
               StatusReply.Success(updatedCart.toSummary))
-      
 
-      
+
       case Get(_, replyTo) =>
         Effect.reply(replyTo)(state.toSummary)
-      
-      
+
     }
   }
   

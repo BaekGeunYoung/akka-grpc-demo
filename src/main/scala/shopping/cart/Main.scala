@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory
 
 import scala.util.control.NonFatal
 import akka.actor.CoordinatedShutdown
-import shopping.order.proto.{ShoppingOrderService, ShoppingOrderServiceClient}
 import akka.grpc.GrpcClientSettings
 
 import scala.concurrent.Future

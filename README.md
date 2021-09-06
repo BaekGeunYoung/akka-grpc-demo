@@ -292,3 +292,22 @@ kubectl expose deployment shopping-cart --type=LoadBalancer --name=shopping-cart
 // minikube에 생성된 service에 접근하도록 포트 열어주기
 minikube service shopping-cart-service -n shopping-cart-1
 ```
+
+1. actor에 command1 보냄
+2. command1 handler에서 program: (command, state) => IO(Result, List[Event])를 실행
+3. program을 실행해서 나온 future를 pipeToSelf해서 새로운 command2를 만들어 보냄
+4. 그리고 Effect.stash()
+5. command2 handler에서는 메세지에 담겨져 온 Event를 persist하고 result를 replyTo에 보냄
+6. Effect.unstashAll()
+
+원하는 동작:
+```
+1. actor에 command를 보내면
+2. future1을 호출하고
+3-1. future1의 결과가 A면 future2 호출
+   3-1-1. future2의 결과가 C면 event 1,2,3 + result1 리턴
+   3-1-2. future2의 결과가 D면 event 1,2,4 + result2 리턴
+3-2. future1의 결과가 B면 future3 호출
+   3-2-1. future2의 결과가 E면 event 1,5,6 + result3 리턴
+   3-2-2. future2의 결과가 F면 event 1,5,7 + result4 리턴
+```
